@@ -10,6 +10,7 @@ User Point System is a Node.js backend application built with Express and MongoD
 - Claim random points for a user (1–10 points per claim)
 - Retrieve all users ranked by total points
 - Store and retrieve claim history for each user
+- Leaderboard and user claim history endpoints
 
 ## Technologies Used
 
@@ -31,10 +32,18 @@ User Point System is a Node.js backend application built with Express and MongoD
    npm install
    ```
 
- 
+3. **Configure environment variables**
+
+   Create a `.env` file in the `Backend` folder:
+   ```
+   PORT=5000
+   MONGO_URI=mongodb://localhost:27017/points-system
    ```
 
-
+4. **Start the server**
+   ```sh
+   npm start
+   ```
 
 ## API Endpoints
 
@@ -51,14 +60,17 @@ User Point System is a Node.js backend application built with Express and MongoD
 - **Response Example:**
   ```json
   {
-    "_id": "664b1e...",
-    "name": "Alice",
-    "totalPoints": 0,
-    "__v": 0
+    "message": "User created",
+    "user": {
+      "_id": "664b1e...",
+      "name": "Alice",
+      "totalPoints": 0,
+      "__v": 0
+    }
   }
   ```
 
-### 2. Claim Points
+### 2. Claim Points (User Controller)
 
 - **Method:** POST  
 - **Route:** `/claimPoints/:id`
@@ -78,9 +90,7 @@ User Point System is a Node.js backend application built with Express and MongoD
     "history": {
       "_id": "664b1f...",
       "userId": "664b1e...",
-      "points": 7,
-      "claimedAt": "2024-06-01T12:34:56.789Z",
-      "__v": 0
+      "points": 7
     }
   }
   ```
@@ -107,6 +117,68 @@ User Point System is a Node.js backend application built with Express and MongoD
   ]
   ```
 
+### 4. Claim Points (Claim Controller)
+
+- **Method:** POST  
+- **Route:** `/api/claim`
+- **Body Example:**
+  ```json
+  {
+    "userId": "664b1e..."
+  }
+  ```
+- **Response Example:**
+  ```json
+  {
+    "message": "Points claimed successfully",
+    "user": {
+      "_id": "664b1e...",
+      "name": "Alice",
+      "totalPoints": 17,
+      "__v": 0
+    },
+    "pointsClaimed": 10,
+    "currentRank": 1
+  }
+  ```
+
+### 5. Leaderboard
+
+- **Method:** GET  
+- **Route:** `/api/leaderboard`
+- **Response Example:**
+  ```json
+  [
+    {
+      "name": "Alice",
+      "totalPoints": 17,
+      "rank": 1
+    },
+    {
+      "name": "Bob",
+      "totalPoints": 10,
+      "rank": 2
+    }
+  ]
+  ```
+
+### 6. User Claim History
+
+- **Method:** GET  
+- **Route:** `/api/history/:userId`
+- **Response Example:**
+  ```json
+  [
+    {
+      "_id": "664b1f...",
+      "userId": "664b1e...",
+      "pointsClaimed": 10,
+      "claimedAt": "2024-06-01T12:34:56.789Z",
+      "__v": 0
+    }
+  ]
+  ```
+
 ## MongoDB Schema Overview
 
 ### User
@@ -116,12 +188,7 @@ User Point System is a Node.js backend application built with Express and MongoD
 
 ### ClaimHistory
 
-- `userId`: ObjectId (reference to User)
-- `points`: Number
+- `userId`: ObjectId (reference to User, required)
+- `pointsClaimed`: Number (required)
 - `claimedAt`: Date (default: now)
-
-
-
-
-
 

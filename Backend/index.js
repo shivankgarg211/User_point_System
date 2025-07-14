@@ -15,7 +15,8 @@ connectDb();
 // Routes
 const userRoutes = require('./routes/UserRoutes');
  app.use ('/',userRoutes);
-
+const claimRoutes = require('./routes/claimRoutes');
+app.use('/api',claimRoutes)
 
 
 
