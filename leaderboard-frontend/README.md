@@ -1,70 +1,150 @@
-# Getting Started with Create React App
+# User Point System Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Description
 
-## Available Scripts
+This is the React frontend for the User Point System project. It displays a live leaderboard, allows users to be added, and lets users claim random points. The frontend communicates with the Node.js + Express backend via REST API.
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+- View live leaderboard with top 3 podium display
+- Add new users via modal
+- Claim random points for any user via modal
+- Responsive UI with Tailwind CSS
+- Automatic leaderboard refresh every 5 seconds
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Technologies Used
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- React.js
+- Axios
+- Tailwind CSS
+- React Icons
 
-### `npm test`
+## Setup Instructions
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. **Clone the repository**
+   ```sh
+   git clone <repository-url>
+   cd leaderboard-frontend
+   ```
 
-### `npm run build`
+2. **Install dependencies**
+   ```sh
+   npm install
+   ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+3. **Start the frontend**
+   ```sh
+   npm start
+   ```
+   The app will run at [http://localhost:3000](http://localhost:3000).
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+> **Note:** Make sure the backend server is running at `http://localhost:5000`.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Folder Structure
 
-### `npm run eject`
+```
+leaderboard-frontend/
+  public/
+  src/
+    components/
+      HeaderTabs.jsx
+      Leaderboard.jsx
+    App.js
+    index.js
+  package.json
+  README.md
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Main Components
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### App.js
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- Renders `HeaderTabs` and `Leaderboard` components.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### HeaderTabs.jsx
 
-## Learn More
+- Displays main and sub tabs (UI only).
+- "Add User" button opens modal to add a new user (calls `/addUser` API).
+- "Claim" button opens modal to claim points for a selected user (calls `/api/claim` API).
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Leaderboard.jsx
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Fetches leaderboard data from `/api/leaderboard` endpoint.
+- Shows top 3 users in podium style.
+- Displays other users in a table.
+- Refreshes leaderboard every 5 seconds.
 
-### Code Splitting
+## API Integration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- **Add User:**  
+  `POST http://localhost:5000/addUser`  
+  Body: `{ "name": "Alice" }`  
+  Response:
+  ```json
+  {
+    "message": "User created",
+    "user": {
+      "_id": "664b1e...",
+      "name": "Alice",
+      "totalPoints": 0,
+      "__v": 0
+    }
+  }
+  ```
 
-### Analyzing the Bundle Size
+- **Claim Points:**  
+  `POST http://localhost:5000/api/claim`  
+  Body: `{ "userId": "<user_id>" }`  
+  Response:
+  ```json
+  {
+    "message": "Points claimed successfully",
+    "user": {
+      "_id": "664b1e...",
+      "name": "Alice",
+      "totalPoints": 17,
+      "__v": 0
+    },
+    "pointsClaimed": 10,
+    "currentRank": 1
+  }
+  ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- **Get Leaderboard:**  
+  `GET http://localhost:5000/api/leaderboard`  
+  Response:
+  ```json
+  [
+    {
+      "name": "Alice",
+      "totalPoints": 17,
+      "rank": 1
+    },
+    {
+      "name": "Bob",
+      "totalPoints": 10,
+      "rank": 2
+    }
+  ]
+  ```
 
-### Making a Progressive Web App
+- **Get All Users (for dropdown):**  
+  `GET http://localhost:5000/getAllUsers`  
+  Response:
+  ```json
+  [
+    {
+      "_id": "664b1e...",
+      "name": "Alice",
+      "totalPoints": 15,
+      "__v": 0
+    },
+    {
+      "_id": "664b1f...",
+      "name": "Bob",
+      "totalPoints": 10,
+      "__v": 0
+    }
+  ]
+  ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
